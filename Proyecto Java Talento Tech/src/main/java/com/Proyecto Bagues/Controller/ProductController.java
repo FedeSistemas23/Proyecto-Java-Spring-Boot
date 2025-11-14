@@ -21,66 +21,30 @@ public class ProductController {
     this.service = service;
   }
 
-  // localhost:8080/hello
-  @GetMapping("/hello")
-  public String helloWorld() {
-    return "Hola comision 25254";
-  }
 
-  @PostMapping("/products")
+  @@PostMapping("/products")
   public Producto crearProducto(@RequestBody Producto producto) {
     return this.service.crearProducto(producto);
   }
 
-  // ArrayList
-  // TODO: fix
-  // GET /products
-  // GET /products?nombre="akjshd"
+  // TODO: ver wrappers
+  // TODO: preguntar a sofi sobre las inscripciones del 2026
   // GET /products?nombre="product"&precio=123
   @GetMapping("/products")
-  public List<String> listarProductos(
-      @RequestParam(required = false, defaultValue = "") String nombre, @RequestParam int precio) {
-    return List.of(nombre, String.valueOf(precio));
+  public List<Producto> listarProductos(
+      @RequestParam(required = false, defaultValue = "") String nombre,
+      @RequestParam(required = false, defaultValue = "0") int precio) {
+    return this.service.listarProductos(nombre, precio);
   }
 
-  // TODO: fix
-  @GetMapping("/products/nombre")
-  public List<String> buscarProductoPorNombre(@RequestParam String nombre) {
-    return List.of("producto1", nombre);
-  }
-
-  @GetMapping("/products/precio")
-  public List<String> buscarProductoPorPrecio(@RequestParam int precio) {
-    return List.of("producto1", String.valueOf(precio));
-  }
-
-  // PUT /products/12
-  // PUT /products/13
-  // PUT /products/23
-  // PUT /products/aksldjas
   //@PatchMapping
   @PutMapping("/products/{id}")
-  public String editarProducto(@PathVariable int id) {
-    return "editando producto" + id;
+  public Producto editarProducto(@PathVariable int id, @RequestBody Producto producto) {
+    return this.service.editarNombreProducto(id, producto);
   }
+
 
   @DeleteMapping("/products/{id}")
-  public String borrarProducto(@PathVariable(name = "id") int productId) {
-    return "borrando producto" + productId;
+  public Producto borrarProducto(@PathVariable(name = "id") int productId) {
+    return this.service.borrarProducto(productId);
   }
-
-  // POST   /products
-  // GET    /products
-  // PUT    /products/12
-  // DELETE /products/15
-
-  // POST, PUT & PATCH
-//case 1 -> crearProducto(productosDB);
-
-//case 2 -> listarProductos(productosDB);
-//case 3 -> buscarProductoPorNombre(productosDB);
-  //case 6 -> filtroPorPrecio(productosDB);
-
-//case 4 -> editarProducto(productosDB);
-//case 5 -> borrarProducto(productosDB);
-}
