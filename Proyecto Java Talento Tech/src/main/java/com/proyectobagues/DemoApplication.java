@@ -1,4 +1,4 @@
-package com.proyecto.Java.Talent.Tech;
+package com.proyectobagues;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
