@@ -16,7 +16,7 @@ import java.util.*;
 @Repository
 public class ProductRepository {
 
-  private static int nextId = 1;
+  private static long nextId = 1L;
   private List<Producto> productos;
 
   public ProductRepository() {
@@ -26,7 +26,7 @@ public class ProductRepository {
   /* ------------------ MÉTODOS PÚBLICOS ------------------ */
 
   public Producto guardarProducto(Producto producto) {
-    asignarId(producto);
+    this.updateId(producto);
     productos.add(producto);
     return producto;
   }
@@ -38,7 +38,7 @@ public class ProductRepository {
   public List<Producto> obtenerProductosPorNombreYPrecio(String nombre, int precioTope) {
     return filtrarProductos(p ->
         coincideNombre(p.getNombre(), nombre) &&
-            p.getPrecioRegular() <= precioTope
+            p.getPrecioregular() <= precioTope
     );
   }
 
@@ -47,7 +47,7 @@ public class ProductRepository {
   }
 
   public List<Producto> obtenerProductosPorPrecio(int precioTope) {
-    return filtrarProductos(p -> p.getPrecioRegular() <= precioTope);
+    return filtrarProductos(p -> p.getPrecioregular() <= precioTope);
   }
 
   public Producto buscarProductoPorId(int id) {
@@ -128,6 +128,10 @@ public class ProductRepository {
     }
 
     return lista;
+  }
+  private void updateId(Producto producto) {
+    producto.setId(nextId);
+    nextId++;
   }
 }
 
