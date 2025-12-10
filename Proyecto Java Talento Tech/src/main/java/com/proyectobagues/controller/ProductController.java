@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/products")
-public class ProductController {
+public class  ProductController {
 
   private final ProductService service;
 
@@ -31,27 +31,28 @@ public class ProductController {
     return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
   }
 
-  @GetMapping()
+  @GetMapping
   public List<Producto> listarProductos(
       @RequestParam(required = false) String nombre,
-      @RequestParam(required = false) Integer precio) {
-
-    return service.listarProductos(
-        nombre != null ? nombre : "",
-        precio != null ? precio : 0
-    );
+      @RequestParam(required = false) Double precio) {
+    try {
+      return service.listarProductos(nombre, precio);
+    } catch (Exception e) {
+      e.printStackTrace(); // ⬅️ Acá se imprime el stacktrace
+      throw e; // vuelve a lanzar la excepción para que Spring responda 500
+    }
   }
 
   @PatchMapping("/{id}")
   public ResponseEntity<Producto> editarProducto(
-      @PathVariable int id,
+      @PathVariable long id,
       @RequestBody Producto producto) {
 
     return ResponseEntity.ok(service.editarNombreProducto(id, producto));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> borrarProducto(@PathVariable int id) {
+  public ResponseEntity<Void> borrarProducto(@PathVariable long id) {
     service.borrarProducto(id);
     return ResponseEntity.noContent().build();
   }

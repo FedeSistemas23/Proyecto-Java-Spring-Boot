@@ -14,12 +14,12 @@ import java.net.URL;
 import java.util.*;
 
 @Repository
-public class ProductRepository {
+public class ProductMemRepository {
 
   private static long nextId = 1L;
   private List<Producto> productos;
 
-  public ProductRepository() {
+  public ProductMemRepository() {
     this.productos = cargarProductosDesdeApi();
   }
 

@@ -1,67 +1,76 @@
 package com.proyectobagues.service;
 
 import com.proyectobagues.model.Producto;
-import com.proyectobagues.repository.ProductRepository;
+import com.proyectobagues.repository.ProductMemRepository;
+import com.proyectobagues.repository.ProductoRepository;
 import java.util.List;
+import java.util.Optional;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProductService {
 
-  private final ProductRepository repository;
+  private final ProductoRepository productoRepository;
 
-  public ProductService(ProductRepository repository) {
-    this.repository = repository;
-  }
+  public ProductService(ProductoRepository repository) {this.productoRepository = repository;  }
 
   public Producto crearProducto(Producto producto) {
-    return repository.guardarProducto(producto);
+
+      return productoRepository.save(producto);
   }
 
-  public List<Producto> listarProductos(String nombre, Integer precio) {
+  public List<Producto> listarProductos( String nombre, Double precio) {
 
-    if (nombre != null && !nombre.isBlank() && precio != null && precio > 0) {
-      return repository.obtenerProductosPorNombreYPrecio(nombre, precio);
+    boolean hayNombre = (nombre != null && !nombre.isEmpty());
+    boolean hayPrecio = (precio != null && precio > 0);
+
+    if (hayNombre && hayPrecio) {
+      return productoRepository.findByNombreContainingAndPrecioregularLessThanEqual(nombre, precio);
     }
 
-    if (nombre != null && !nombre.isBlank()) {
-      return repository.obtenerProductosPorNombre(nombre);
+    if (hayNombre) {
+      return productoRepository.findByNombreContaining(nombre);
     }
 
-    if (precio != null && precio > 0) {
-      return repository.obtenerProductosPorPrecio(precio);
+    if (hayPrecio) {
+      return productoRepository.findByPrecioregularLessThanEqual(precio);
     }
 
-    return repository.obtenerProductos();
+    return productoRepository.findAll();
   }
 
-  public Producto editarNombreProducto(int id, Producto data) {
+  public Producto editarNombreProducto(Long id, Producto dataProducto) {
 
-    Producto producto = repository.buscarProductoPorId(id);
+    Producto producto = this.productoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("no encontramos el producto"));
 
-    if (producto == null) {
+    // VALIDACIONES
+    if (dataProducto.getNombre() == null || dataProducto.getNombre().isBlank()) {
+      System.out.println("No se puede editar el producto. porque el nombre no es valido");
       return null;
     }
-
-    if (data.getNombre() == null || data.getNombre().isBlank()) {
-      return null;
-    }
-
-    producto.setNombre(data.getNombre());
-    repository.actualizarProducto(producto);
+    producto.setNombre(dataProducto.getNombre());
+    this.productoRepository.save(producto);
 
     return producto;
   }
 
-  public void borrarProducto(int id) {
-
-    Producto producto = repository.buscarProductoPorId(id);
-
-    if (producto == null) {
-      return;
+  public Producto borrarProducto(Long id) {
+    Optional<Producto> productOptional = this.productoRepository.findById(id);
+    if (productOptional.isEmpty()) {
+      System.out.println("No se puede borrar el producto. porque no se encontro");
+      return null;
     }
 
-    repository.borrarProducto(producto);
+    Producto producto = productOptional.get();
+
+    this.productoRepository.delete(producto);
+    // se puede usar el siguiente codigo, pero hay que manejar una excepcion(OptimisticLockingFailureException)
+    //this.repository.deleteById(producto);
+
+    System.out.println("Se borro correctamente el producto con id: " + producto.getId());
+    return producto;
   }
 }
 

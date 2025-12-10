@@ -24,7 +24,7 @@ public class Producto {
   private double preciodescuento;
   private String type;
   private String familiaolfativa;
-  private int stock;
+  private Integer stock;
   // Constructor vacío necesario para Jackson
   public Producto() {
   }
