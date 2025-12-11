@@ -40,21 +40,20 @@ public class ProductService {
     return productoRepository.findAll();
   }
 
-  public Producto editarNombreProducto(Long id, Producto dataProducto) {
+  public Producto editarNombreProducto(Long id, Producto data) {
+    Producto producto = productoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-    Producto producto = this.productoRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("no encontramos el producto"));
+    if (data.getNombre() != null) producto.setNombre(data.getNombre());
+    if (data.getDescripcion() != null) producto.setDescripcion(data.getDescripcion());
+    if (data.getPrecioregular() != 0) producto.setPrecioregular(data.getPrecioregular());
+    if (data.getPreciodescuento() != 0) producto.setPreciodescuento(data.getPreciodescuento());
+    if (data.getStock() != 0) producto.setStock(data.getStock());
+    if (data.getImagen() != null) producto.setImagen(data.getImagen());
 
-    // VALIDACIONES
-    if (dataProducto.getNombre() == null || dataProducto.getNombre().isBlank()) {
-      System.out.println("No se puede editar el producto. porque el nombre no es valido");
-      return null;
-    }
-    producto.setNombre(dataProducto.getNombre());
-    this.productoRepository.save(producto);
-
-    return producto;
+    return productoRepository.save(producto);
   }
+
 
   public Producto borrarProducto(Long id) {
     Optional<Producto> productOptional = this.productoRepository.findById(id);
